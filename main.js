@@ -36,7 +36,7 @@ function init() {
 	
 	new GLTFLoader()
 		.setPath( 'models/gltf/' )
-		.load( 'test.gltf', function ( gltf ) {
+		.load( 'editedReactor2.gltf', function ( gltf ) {
 			scene.add( gltf.scene );
 			gltf.scene.translateY(150)
 		} );
