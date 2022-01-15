@@ -5,7 +5,6 @@ import { GLTFLoader } from './jsm/loaders/GLTFLoader.js';
 import { RoomEnvironment } from './jsm/environments/RoomEnvironment.js';
 
 let camera, scene, renderer, controls;
-let rotate, i = 0, x, z;
 
 init();
 animate();
@@ -17,18 +16,6 @@ function init() {
 
 	camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 5000 );
 	camera.position.set(800,600,800);
-
-	rotate = setInterval(() => {
-		if (i===360) i = 0
-
-		x = 1200 * Math.cos(i)
-		z = 1200 * Math.sin(i)
-
-		camera.position.set(x,600,z)
-
-		i += 0.005;
-	}, 10)
-	
 
 	scene = new THREE.Scene();
 	scene.fog = new THREE.Fog( 0x666666, 1500, 2000 );
@@ -50,7 +37,6 @@ function init() {
 	new GLTFLoader()
 		.setPath( 'models/gltf/' )
 		.load( 'test.gltf', function ( gltf ) {
-
 			scene.add( gltf.scene );
 			gltf.scene.translateY(150)
 		} );
@@ -79,6 +65,16 @@ function init() {
 	controls = new OrbitControls( camera, renderer.domElement );
 	controls.enableDamping = true;
 	controls.target.set( 0, 200, 0 );
+
+	controls.autoRotate = true;
+	controls.autoRotateSpeed = 2.0;
+
+	document.addEventListener("keydown", (event) => {
+		if (event.key === " ") {
+			controls.autoRotate = !controls.autoRotate
+		}
+	})
+
 	controls.update();
 
 	window.addEventListener( 'resize', onWindowResize );
@@ -111,26 +107,3 @@ function render() {
 	renderer.render( scene, camera );
 
 }
-
-let paused = false;
-document.addEventListener("keydown", (event) => {
-	if (event.key === " ") {
-		if (paused === false) {
-			clearInterval(rotate)
-			paused = true
-		} else {
-			rotate = setInterval(() => {
-				if (i===360) i = 0
-		
-				x = 1200 * Math.cos(i)
-				z = 1200 * Math.sin(i)
-		
-				camera.position.set(x,600,z)
-		
-				i += 0.005;
-			}, 10)
-			paused = false
-		}
-
-	}
-})
